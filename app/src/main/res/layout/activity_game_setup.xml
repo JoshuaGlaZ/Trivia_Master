@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GameSetupActivity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:fontFamily="@font/rozha_one"
+        android:text="Trivia Master"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="34sp"
+        android:theme="@style/Theme.Trivia_Master"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/txtPlayerName"
+        style="@style/Widget.Material3.TextInputEditText.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="32dp"
+        android:layout_marginTop="48dp"
+        android:ems="10"
+        android:fontFamily="@font/questrial"
+        android:hint="Player Name"
+        android:inputType="textPersonName"
+        android:textAlignment="center"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textColorHint="?android:attr/textColorSecondary"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <RadioGroup
+        android:id="@+id/groupDifficulty"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="32dp"
+        android:layout_marginTop="32dp"
+        android:checkedButton="@id/radioEasy"
+        android:orientation="horizontal"
+        android:showDividers="middle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtPlayerName">
+
+        <RadioButton
+            android:id="@+id/radioEasy"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/questrial"
+            android:padding="6sp"
+            android:text="Easy"
+            android:textColor="?android:attr/textColorPrimary"
+            android:theme="@style/colorRadioEasy" />
+
+        <RadioButton
+            android:id="@+id/radioMedium"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/questrial"
+            android:padding="6sp"
+            android:text="Medium"
+            android:textColor="?android:attr/textColorPrimary"
+            android:theme="@style/colorRadioMedium" />
+
+        <RadioButton
+            android:id="@+id/radioHard"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/questrial"
+            android:padding="6sp"
+            android:text="Hard"
+            android:textColor="?android:attr/textColorPrimary"
+            android:theme="@style/colorRadioHard" />
+    </RadioGroup>
+
+    <Spinner
+        android:id="@+id/comboType"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/groupDifficulty" />
+
+    <Switch
+        android:id="@+id/switchNightMode"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginTop="32dp"
+        android:fontFamily="@font/questrial"
+        android:text="Night Mode"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textOff="OFF"
+        android:textOn="ON"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/comboType" />
+
+    <Button
+        android:id="@+id/btnStart"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="32dp"
+        android:elevation="2dp"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:text="Start"
+        android:textSize="20sp"
+        app:cornerRadius="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switchNightMode" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
