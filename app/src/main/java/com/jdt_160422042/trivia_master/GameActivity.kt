@@ -17,9 +17,13 @@ class GameActivity : AppCompatActivity() {
 
     companion object {
         val SCORE_KEY = "score"
+
         val ASK_AUDIENCE_KEY = "askAudience"
+
         val FIFTY_KEY = "fifty"
+
         val PHONE_FRIEND_KEY = "phoneFriend"
+
     }
 
     var score = 0
