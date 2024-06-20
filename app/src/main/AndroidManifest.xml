@@ -12,6 +12,15 @@
         android:theme="@style/Theme.Trivia_Master"
         tools:targetApi="31">
         <activity
+            android:name=".ActivityOnboard2"
+            android:exported="false" />
+        <activity
+            android:name=".ActivityOnboard3"
+            android:exported="false" />
+        <activity
+            android:name=".ActivityOnboard1"
+            android:exported="false" />
+        <activity
             android:name=".ScoreListActivity"
             android:exported="false" />
         <activity
