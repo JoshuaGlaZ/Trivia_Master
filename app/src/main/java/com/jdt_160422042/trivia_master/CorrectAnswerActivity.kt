@@ -15,10 +15,8 @@ class CorrectAnswerActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val player_name: String? = intent.getStringExtra(GameSetupActivity.PLAYER_NAME_KEY)
-        val difficulty: Difficulty? = intent.getStringExtra(GameSetupActivity.DIFFICULTY_KEY)
-            ?.let { Difficulty.valueOf(it) }
-        val type: Type? = intent.getStringExtra(GameSetupActivity.TYPE_KEY)
-            ?.let { Type.valueOf(it) }
+        val difficulty: String? = intent.getStringExtra(GameSetupActivity.DIFFICULTY_KEY)
+        val type: String? = intent.getStringExtra(GameSetupActivity.TYPE_KEY)
         val askAudience = intent.getBooleanExtra(GameActivity.ASK_AUDIENCE_KEY, true)
         val fifty = intent.getBooleanExtra(GameActivity.FIFTY_KEY, true)
         val score = intent.getIntExtra(GameActivity.SCORE_KEY, 0)
@@ -31,8 +29,8 @@ class CorrectAnswerActivity : AppCompatActivity() {
         binding.btnContinue.setOnClickListener {
             val intent = Intent(this, GameActivity::class.java)
             intent.putExtra(GameSetupActivity.PLAYER_NAME_KEY, player_name)
-            intent.putExtra(GameSetupActivity.DIFFICULTY_KEY, difficulty?.name)
-            intent.putExtra(GameSetupActivity.TYPE_KEY, type?.name)
+            intent.putExtra(GameSetupActivity.DIFFICULTY_KEY, difficulty)
+            intent.putExtra(GameSetupActivity.TYPE_KEY, type)
             intent.putExtra(GameActivity.ASK_AUDIENCE_KEY, askAudience)
             intent.putExtra(GameActivity.FIFTY_KEY, fifty)
             intent.putExtra(GameActivity.PHONE_FRIEND_KEY, phoneFriend)
@@ -43,8 +41,8 @@ class CorrectAnswerActivity : AppCompatActivity() {
         binding.btnSurrender.setOnClickListener {
             val intent = Intent(this, ScoreListActivity::class.java)
             intent.putExtra(GameSetupActivity.PLAYER_NAME_KEY, player_name)
-            intent.putExtra(GameSetupActivity.DIFFICULTY_KEY, difficulty?.name)
-            intent.putExtra(GameSetupActivity.TYPE_KEY, type?.name)
+            intent.putExtra(GameSetupActivity.DIFFICULTY_KEY, difficulty)
+            intent.putExtra(GameSetupActivity.TYPE_KEY, type)
             intent.putExtra(GameActivity.SCORE_KEY, score)
             startActivity(intent)
         }

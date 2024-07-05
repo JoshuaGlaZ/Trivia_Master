@@ -10,7 +10,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View.INVISIBLE
 import android.widget.Button
+import com.android.volley.Request
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.jdt_160422042.trivia_master.databinding.ActivityGameBinding
+import org.json.JSONObject
 
 class GameActivity : AppCompatActivity() {
     private lateinit var binding: ActivityGameBinding
@@ -27,8 +33,37 @@ class GameActivity : AppCompatActivity() {
     }
 
     var score = 0
-    var selectedQuestions:Array<Question> = Global.questions
+    lateinit var selected:Question
 
+    fun getQuestions(difficulty: String, type: String){
+        val q = Volley.newRequestQueue(this)
+        val url = "http://10.0.2.2/trivia_master/get_questions.php"
+        val sr = object: StringRequest(
+            Request.Method.POST,
+            url,
+            {
+                Log.d("apiresult", it)
+                val obj = JSONObject(it)
+                if(obj.getString("result") == "OK") {
+                    val data = obj.getJSONObject("data")
+                    val sType = object : TypeToken<Question>() {}.type
+
+                    selected = Gson().fromJson(data.toString(), sType) as Question
+                    Log.d("apiresult", selected.toString())
+                    shuffleAnswer()
+                }
+            },
+            { Log.e("apiresult", it.message.toString()) }
+        ) {
+            override fun getParams(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["difficulty"] = difficulty
+                params["type"] = type
+                return params
+            }
+        }
+        q.add(sr)
+    }
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,18 +71,15 @@ class GameActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val playerName: String? = intent.getStringExtra(GameSetupActivity.PLAYER_NAME_KEY)
-        val difficulty: Difficulty? = intent.getStringExtra(GameSetupActivity.DIFFICULTY_KEY)
-            ?.let { Difficulty.valueOf(it) }
-        val type: Type? = intent.getStringExtra(GameSetupActivity.TYPE_KEY)
-            ?.let { Type.valueOf(it) }
+        val difficulty: String? = intent.getStringExtra(GameSetupActivity.DIFFICULTY_KEY)
+        val type: String? = intent.getStringExtra(GameSetupActivity.TYPE_KEY)
         var askAudience = intent.getBooleanExtra(ASK_AUDIENCE_KEY, true)
         var fifty = intent.getBooleanExtra(FIFTY_KEY, true)
         var phoneFriend = intent.getBooleanExtra(PHONE_FRIEND_KEY, true)
 
         score = intent.getIntExtra(SCORE_KEY, 0)
 
-        displayQuestion(difficulty, type)
-        val selected = selectedQuestions[0]
+        getQuestions(difficulty!!, type!!)
 
         with (binding) {
             btnAskAudience.isEnabled = askAudience
@@ -122,9 +154,9 @@ class GameActivity : AppCompatActivity() {
                 if (phoneFriend) {
                     var successRate = 0
                     when (selected.difficulty) {
-                        Difficulty.Easy -> successRate = 100
-                        Difficulty.Medium -> successRate = 85
-                        Difficulty.Hard -> successRate = 70
+                        "Easy" -> successRate = 100
+                        "Medium" -> successRate = 85
+                        "Hard" -> successRate = 70
                     }
                     val buttons: Array<Button> = arrayOf(btnAnswerA, btnAnswerB, btnAnswerC, btnAnswerD)
                         .filterNot { getAnswer(it.text as String) == selected.correct_answer }.toTypedArray()
@@ -152,17 +184,17 @@ class GameActivity : AppCompatActivity() {
 //        super.onBackPressed()
     }
 
-    fun correctAnswer(player_name: String?, difficulty: Difficulty?, type: Type?, askAudience: Boolean,
+    fun correctAnswer(player_name: String?, difficulty: String?, type: String?, askAudience: Boolean,
                       fifty: Boolean, phoneFriend: Boolean) {
         score += when (difficulty) {
-            Difficulty.Easy -> 1000
-            Difficulty.Medium -> 2000
-            Difficulty.Hard -> 3000
+            "Easy" -> 1000
+            "Medium" -> 2000
+            "Hard" -> 3000
             else -> 0        }
         val intent = Intent(this, CorrectAnswerActivity::class.java)
         intent.putExtra(GameSetupActivity.PLAYER_NAME_KEY, player_name)
-        intent.putExtra(GameSetupActivity.DIFFICULTY_KEY, difficulty?.name)
-        intent.putExtra(GameSetupActivity.TYPE_KEY, type?.name)
+        intent.putExtra(GameSetupActivity.DIFFICULTY_KEY, difficulty)
+        intent.putExtra(GameSetupActivity.TYPE_KEY, type)
         intent.putExtra(ASK_AUDIENCE_KEY, askAudience)
         intent.putExtra(FIFTY_KEY, fifty)
         intent.putExtra(PHONE_FRIEND_KEY, phoneFriend)
@@ -170,25 +202,19 @@ class GameActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun gameOver(player_name: String?, difficulty: Difficulty?, type: Type?) {
+    fun gameOver(player_name: String?, difficulty: String?, type: String?) {
         val intent = Intent(this, ScoreListActivity::class.java)
         intent.putExtra(GameSetupActivity.PLAYER_NAME_KEY, player_name)
-        intent.putExtra(GameSetupActivity.DIFFICULTY_KEY, difficulty?.name)
-        intent.putExtra(GameSetupActivity.TYPE_KEY, type?.name)
+        intent.putExtra(GameSetupActivity.DIFFICULTY_KEY, difficulty)
+        intent.putExtra(GameSetupActivity.TYPE_KEY, type)
         intent.putExtra(SCORE_KEY, score)
         startActivity(intent)
     }
 
-    fun displayQuestion(difficulty: Difficulty?, type: Type?) {
-        selectedQuestions = selectedQuestions.filter { it.difficulty == difficulty && it.type == type }.toTypedArray()
-        selectedQuestions.shuffle()
-        binding.txtQuestion.text = selectedQuestions[0].question
+    fun shuffleAnswer() {
+        binding.txtQuestion.text = selected.question
 
-        shuffleAnswer(selectedQuestions[0])
-    }
-
-    fun shuffleAnswer(selected: Question) {
-        val answers: Array<String> = arrayOf(selected.answer_a, selected.answer_b, selected.answer_c, selected.answer_d)
+        val answers: Array<String?> = arrayOf(selected.answer_a, selected.answer_b, selected.answer_c, selected.answer_d)
         answers.shuffle()
 
         binding.btnAnswerA.text = answers[0]
@@ -200,9 +226,10 @@ class GameActivity : AppCompatActivity() {
     fun getPercentage(selected: Question, answers: ArrayList<Button>): Array<String?> {
         val percentages = arrayOfNulls<Int?>(answers.size)
         val correctPercentage = when (selected.difficulty) {
-            Difficulty.Easy -> (70..75).random()
-            Difficulty.Medium -> (65..70).random()
-            Difficulty.Hard -> (55..65).random()
+            "Easy" -> (70..75).random()
+            "Medium" -> (65..70).random()
+            "Hard" -> (55..65).random()
+            else -> 0
         }
         var remainingPercentage = 100 - correctPercentage
         val correctAnswerIndex = answers.indexOfFirst { it.text == selected.correct_answer }

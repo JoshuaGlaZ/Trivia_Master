@@ -21,8 +21,8 @@ class ScoreAdapter(var players: ArrayList<Player>) : RecyclerView.Adapter<ScoreA
         with (holder.binding) {
             txtName.text = players[position].name
             txtScore.text = players[position].score.toString()
-            txtDifficulty.text = players[position].difficulty?.name
-            txtType.text = players[position].type?.name
+            txtDifficulty.text = players[position].difficulty
+            txtType.text = players[position].type
         }
     }
 }

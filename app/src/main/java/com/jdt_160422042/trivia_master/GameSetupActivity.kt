@@ -23,7 +23,7 @@ class GameSetupActivity : AppCompatActivity() {
         val TYPE_KEY = "type"
     }
 
-    var selected_difficult = Difficulty.Easy
+    var selected_difficult = "Easy"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,24 +40,22 @@ class GameSetupActivity : AppCompatActivity() {
 
         val playerName: String? = intent.getStringExtra(PLAYER_NAME_KEY)
         val difficulty = intent.getStringExtra(DIFFICULTY_KEY)
-            ?.let { Difficulty.valueOf(it) }
         val type = intent.getStringExtra(TYPE_KEY)
-            ?.let { Type.valueOf(it) }
 
         if (difficulty != null) {
             selected_difficult = difficulty
         }
 
-        val adapter = ArrayAdapter(this, R.layout.spinner_layout, Global.types)
+        val adapter = ArrayAdapter(this, R.layout.spinner_layout, arrayOf("History", "Geography", "Math"))
         adapter.setDropDownViewResource(R.layout.spinner_item_layout)
         binding.comboType.adapter = adapter
 
         binding.txtPlayerName.setText(playerName)
 
         if (difficulty != null) {
-            if (difficulty == Difficulty.Easy) {
+            if (difficulty == "Easy") {
                 binding.groupDifficulty.check(R.id.radioEasy)
-            } else if (difficulty == Difficulty.Medium) {
+            } else if (difficulty == "Medium") {
                 binding.groupDifficulty.check(R.id.radioMedium)
             } else {
                 binding.groupDifficulty.check(R.id.radioHard)
@@ -65,16 +63,16 @@ class GameSetupActivity : AppCompatActivity() {
         }
 
         if (type != null) {
-            binding.comboType.setSelection(adapter.getPosition(type.name))
+            binding.comboType.setSelection(adapter.getPosition(type))
         }
 
         binding.groupDifficulty.setOnCheckedChangeListener { _, checkedId ->
             if (checkedId == R.id.radioEasy) {
-                selected_difficult = Difficulty.Easy
+                selected_difficult = "Easy"
             } else if (checkedId == R.id.radioMedium) {
-                selected_difficult = Difficulty.Medium
+                selected_difficult = "Medium"
             } else {
-                selected_difficult = Difficulty.Hard
+                selected_difficult = "Hard"
             }
         }
 
@@ -85,7 +83,7 @@ class GameSetupActivity : AppCompatActivity() {
 
         binding.btnStart.setOnClickListener {
             val intent = Intent(this, GameActivity::class.java)
-            intent.putExtra(DIFFICULTY_KEY, selected_difficult.name)
+            intent.putExtra(DIFFICULTY_KEY, selected_difficult)
             intent.putExtra(TYPE_KEY, binding.comboType.selectedItem.toString())
             intent.putExtra(PLAYER_NAME_KEY, binding.txtPlayerName.text.toString())
             startActivity(intent)
