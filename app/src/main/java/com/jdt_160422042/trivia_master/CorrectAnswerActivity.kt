@@ -44,6 +44,7 @@ class CorrectAnswerActivity : AppCompatActivity() {
             intent.putExtra(GameSetupActivity.DIFFICULTY_KEY, difficulty)
             intent.putExtra(GameSetupActivity.TYPE_KEY, type)
             intent.putExtra(GameActivity.SCORE_KEY, score)
+            intent.putExtra(Navigation.INTENT_GAME, true)
             startActivity(intent)
         }
     }

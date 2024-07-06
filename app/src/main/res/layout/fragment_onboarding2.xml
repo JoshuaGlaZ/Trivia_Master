@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/md_theme_primary_mediumContrast"
+    tools:context=".Onboarding2Fragment">
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|right"
+        android:src="@drawable/baseline_keyboard_double_arrow_right_24"
+        android:tint="@color/md_theme_onPrimaryFixedVariant_highContrast" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|left"
+        android:src="@drawable/baseline_keyboard_double_arrow_left_24"
+        android:tint="@color/md_theme_onPrimaryFixedVariant_highContrast" />
+
+    <TextView
+        android:id="@+id/textView8"
+        style="@style/Widget.MaterialComponents.TextView"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|top"
+        android:layout_marginTop="60dp"
+        android:fontFamily="@font/questrial"
+        android:text="In this game, you need to answer series of questions by choose one of available answers"
+        android:textAlignment="center"
+        android:textColor="@color/md_theme_onPrimaryFixedVariant_highContrast"
+        android:textSize="20sp" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="400dp"
+        android:layout_gravity="center"
+        android:scaleType="centerInside"
+        android:src="@drawable/onboarding2" />
+</FrameLayout>

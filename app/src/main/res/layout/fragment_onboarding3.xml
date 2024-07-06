@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/md_theme_tertiary_mediumContrast"
+    tools:context=".Onboarding3Fragment">
+
+    <TextView
+        android:id="@+id/textView9"
+        style="@style/Widget.MaterialComponents.TextView"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|top"
+        android:layout_marginTop="60dp"
+        android:fontFamily="@font/questrial"
+        android:text="You can use the available help, such as &quot;Ask Audience&quot;, &quot;50:50&quot;, and &quot;Phone a Friend&quot;"
+        android:textAlignment="center"
+        android:textColor="@color/md_theme_onPrimaryFixedVariant_highContrast"
+        android:textSize="20sp" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|left"
+        android:src="@drawable/baseline_keyboard_double_arrow_left_24"
+        android:tint="@color/md_theme_onPrimaryFixedVariant_highContrast" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="333dp"
+        android:layout_height="400dp"
+        android:layout_gravity="center"
+        android:scaleType="centerInside"
+        android:src="@drawable/onboarding3" />
+
+    <Button
+        android:id="@+id/btnPlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/md_theme_onTertiaryContainer_highContrast"
+        android:text="LET'S PLAY"
+        android:textColor="@color/md_theme_onPrimaryContainer" />
+</FrameLayout>

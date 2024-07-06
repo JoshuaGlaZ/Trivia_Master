@@ -1,15 +1,24 @@
 package com.jdt_160422042.trivia_master
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.ContactsContract
+import android.telephony.PhoneStateListener
+import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.View.INVISIBLE
 import android.widget.Button
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -30,14 +39,23 @@ class GameActivity : AppCompatActivity() {
 
         val PHONE_FRIEND_KEY = "phoneFriend"
 
+        val REQUEST_PERMISSIONS = 1
+        val REQUEST_CODE_PICK_CONTACT = 2
+        val REQUEST_CODE_CALL = 3
+
+
     }
 
     var score = 0
     lateinit var selected:Question
+    var phoneFriend: Boolean = false
 
-    fun getQuestions(difficulty: String, type: String){
+    private lateinit var telephonyManager: TelephonyManager
+    private var isCallStarted = false
+
+    fun getRandomQuestion(difficulty: String, type: String){
         val q = Volley.newRequestQueue(this)
-        val url = "http://10.0.2.2/trivia_master/get_questions.php"
+        val url = "http://10.0.2.2/trivia_master/get_question.php"
         val sr = object: StringRequest(
             Request.Method.POST,
             url,
@@ -64,6 +82,122 @@ class GameActivity : AppCompatActivity() {
         }
         q.add(sr)
     }
+
+    fun checkPermission() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
+            != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE)
+            != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                arrayOf(android.Manifest.permission.READ_CONTACTS, android.Manifest.permission.CALL_PHONE),
+                REQUEST_PERMISSIONS)
+        } else {
+            openPhoneBook()
+        }
+    }
+
+    fun openPhoneBook() {
+        val intent = Intent()
+        intent.action = Intent.ACTION_PICK
+        intent.type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE
+        startActivityForResult(intent, REQUEST_CODE_PICK_CONTACT)
+    }
+
+    fun callPhoneNumber(phoneNumber: String) {
+        val intent = Intent()
+        intent.action = Intent.ACTION_CALL
+        intent.data = Uri.parse("tel:$phoneNumber")
+        if (checkSelfPermission(android.Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+            startActivityForResult(intent, REQUEST_CODE_CALL)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CODE_PICK_CONTACT && resultCode == Activity.RESULT_CANCELED) {
+            Toast.makeText(this, "Action cancelled by user", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (requestCode == REQUEST_CODE_PICK_CONTACT && resultCode == RESULT_OK) {
+            val contactUri = data?.data
+            val fields = arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER)
+            val cursor = contentResolver.query(contactUri!!, fields,
+                null, null, null)
+
+            if(cursor != null && cursor.moveToFirst()) {
+                val hp = cursor.getString(0)
+                callPhoneNumber(hp)
+            }
+        }
+    }
+
+    fun phoneFriendResult() {
+        with(binding) {
+            var successRate = 0
+            when (selected.difficulty) {
+                "Easy" -> successRate = 100
+                "Medium" -> successRate = 85
+                "Hard" -> successRate = 70
+            }
+            val buttons: Array<Button> = arrayOf(btnAnswerA, btnAnswerB, btnAnswerC, btnAnswerD)
+                .filterNot { getAnswer(it.text as String) == selected.correct_answer }.toTypedArray()
+
+            if ((0..100).random() <= successRate) {
+                when (selected.correct_answer) {
+                    getAnswer(btnAnswerA.text as String) -> btnAnswerA.setBackgroundColor(Color.CYAN)
+                    getAnswer(btnAnswerB.text as String) -> btnAnswerB.setBackgroundColor(Color.CYAN)
+                    getAnswer(btnAnswerC.text as String) -> btnAnswerC.setBackgroundColor(Color.CYAN)
+                    getAnswer(btnAnswerD.text as String) -> btnAnswerD.setBackgroundColor(Color.CYAN)
+                }
+            } else {
+                val randomIndex = (0 until buttons.size).random()
+                buttons[randomIndex].setBackgroundColor(Color.CYAN)
+            }
+            phoneFriend = false
+            btnPhoneFriend.isEnabled = phoneFriend
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_PERMISSIONS) {
+            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                openPhoneBook()
+            } else {
+                Toast.makeText(this, "You must grant permission to phone a friend",
+                    Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+    private val callStateListener = object : PhoneStateListener() {
+        override fun onCallStateChanged(state: Int, phoneNumber: String?) {
+            when (state) {
+                TelephonyManager.CALL_STATE_RINGING -> {
+                    // Phone is ringing
+                }
+                TelephonyManager.CALL_STATE_OFFHOOK -> {
+                    // Call started
+                    isCallStarted = true
+                }
+                TelephonyManager.CALL_STATE_IDLE -> {
+                    // Call ended
+                    if (isCallStarted) {
+                        isCallStarted = false
+                        phoneFriendResult()
+                    }
+                }
+            }
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,11 +209,11 @@ class GameActivity : AppCompatActivity() {
         val type: String? = intent.getStringExtra(GameSetupActivity.TYPE_KEY)
         var askAudience = intent.getBooleanExtra(ASK_AUDIENCE_KEY, true)
         var fifty = intent.getBooleanExtra(FIFTY_KEY, true)
-        var phoneFriend = intent.getBooleanExtra(PHONE_FRIEND_KEY, true)
+        phoneFriend = intent.getBooleanExtra(PHONE_FRIEND_KEY, true)
 
         score = intent.getIntExtra(SCORE_KEY, 0)
 
-        getQuestions(difficulty!!, type!!)
+        getRandomQuestion(difficulty!!, type!!)
 
         with (binding) {
             btnAskAudience.isEnabled = askAudience
@@ -152,28 +286,11 @@ class GameActivity : AppCompatActivity() {
 
             btnPhoneFriend.setOnClickListener {
                 if (phoneFriend) {
-                    var successRate = 0
-                    when (selected.difficulty) {
-                        "Easy" -> successRate = 100
-                        "Medium" -> successRate = 85
-                        "Hard" -> successRate = 70
-                    }
-                    val buttons: Array<Button> = arrayOf(btnAnswerA, btnAnswerB, btnAnswerC, btnAnswerD)
-                        .filterNot { getAnswer(it.text as String) == selected.correct_answer }.toTypedArray()
+                    telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+                    telephonyManager.listen(callStateListener, PhoneStateListener.LISTEN_CALL_STATE)
 
-                    if ((0..100).random() <= successRate) {
-                        when (selected.correct_answer) {
-                            getAnswer(btnAnswerA.text as String) -> btnAnswerA.setBackgroundColor(Color.CYAN)
-                            getAnswer(btnAnswerB.text as String) -> btnAnswerB.setBackgroundColor(Color.CYAN)
-                            getAnswer(btnAnswerC.text as String) -> btnAnswerC.setBackgroundColor(Color.CYAN)
-                            getAnswer(btnAnswerD.text as String) -> btnAnswerD.setBackgroundColor(Color.CYAN)
-                        }
-                    } else {
-                        val randomIndex = (0 until buttons.size).random()
-                        buttons[randomIndex].setBackgroundColor(Color.CYAN)
-                    }
-                    phoneFriend = false
-                    btnPhoneFriend.isEnabled = phoneFriend
+                    checkPermission()
+
                 }
             }
         }
@@ -208,6 +325,7 @@ class GameActivity : AppCompatActivity() {
         intent.putExtra(GameSetupActivity.DIFFICULTY_KEY, difficulty)
         intent.putExtra(GameSetupActivity.TYPE_KEY, type)
         intent.putExtra(SCORE_KEY, score)
+        intent.putExtra(Navigation.INTENT_GAME, true)
         startActivity(intent)
     }
 

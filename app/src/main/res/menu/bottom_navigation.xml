@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Home"
+    <item
         android:id="@+id/home"
+        android:checked="true"
         android:icon="@drawable/baseline_home_24"
-        />
+        android:title="Home" />
     <item android:title="Scoreboard"
         android:id="@+id/score"
         android:icon="@drawable/baseline_format_list_numbered_24"/>

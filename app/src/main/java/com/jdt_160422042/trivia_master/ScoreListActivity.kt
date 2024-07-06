@@ -17,10 +17,6 @@ class ScoreListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityScoreListBinding
     var players:ArrayList<Player> = ArrayList()
 
-    companion object {
-        val PLAYERS_KEY = "player_name"
-    }
-
     fun addPlayer(playerName:String, score: String, difficulty: String, type: String){
         val url = "http://10.0.2.2/trivia_master/add_player.php"
         val q = Volley.newRequestQueue(this)
@@ -87,7 +83,11 @@ class ScoreListActivity : AppCompatActivity() {
         val type: String? = intent.getStringExtra(GameSetupActivity.TYPE_KEY)
         val score = intent.getIntExtra(GameActivity.SCORE_KEY, 0)
 
-        addPlayer(playerName!!, score.toString(), difficulty.toString(), type.toString())
+        if (intent.hasExtra(Navigation.INTENT_GAME)) {
+            addPlayer(playerName!!, score.toString(), difficulty.toString(), type.toString())
+        } else if (intent.hasExtra(Navigation.INTENT_SETUP)) {
+            getPlayerData()
+        }
 //
 //        val sharedFile = "com.jdt_160422042.trivia_master"
 //        val shared: SharedPreferences = getSharedPreferences(sharedFile, Context.MODE_PRIVATE)
@@ -112,7 +112,17 @@ class ScoreListActivity : AppCompatActivity() {
 //            setHasFixedSize(true)
 //            adapter = ScoreAdapter(players)
 //        }
+        binding.bottomNavBarScore.selectedItemId = R.id.score
 
+        binding.bottomNavBarScore.setOnItemSelectedListener {
+            val intent = when(it.itemId) {
+                R.id.home -> Intent(this, GameSetupActivity::class.java)
+                R.id.edit -> Intent(this, EditQuestionActivity::class.java)
+                else -> Intent(this, ScoreListActivity::class.java)
+            }
+            startActivity(intent)
+            true
+        }
         binding.btnBack.setOnClickListener {
             val intent = Intent(this, GameSetupActivity::class.java)
             intent.putExtra(GameSetupActivity.PLAYER_NAME_KEY, playerName)

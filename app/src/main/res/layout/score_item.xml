@@ -12,6 +12,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="8dp"
+        app:cardBackgroundColor="@color/md_theme_inversePrimary_highContrast"
         app:cardCornerRadius="30dp"
         app:cardElevation="5dp"
         app:cardMaxElevation="10dp"
@@ -33,6 +34,7 @@
 
             <TextView
                 android:id="@+id/txtName"
+                style="@style/TextAppearance.Material3.HeadlineLarge"
                 android:layout_width="110dp"
                 android:layout_height="23dp"
                 android:layout_marginStart="32dp"
@@ -50,6 +52,7 @@
 
             <TextView
                 android:id="@+id/txtDifficulty"
+                style="@style/TextAppearance.Material3.DisplayMedium"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -65,6 +68,7 @@
 
             <TextView
                 android:id="@+id/txtScore"
+                style="@style/TextAppearance.Material3.HeadlineLarge"
                 android:layout_width="110dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -81,9 +85,9 @@
 
             <TextView
                 android:id="@+id/txtType"
+                style="@style/TextAppearance.Material3.BodySmall"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:fontFamily="@font/questrial"
                 android:text="TextView"
                 android:textAlignment="viewStart"
