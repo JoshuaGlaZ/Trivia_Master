@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 27, 2024 at 09:37 AM
+-- Generation Time: Jul 07, 2024 at 03:33 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -40,8 +40,18 @@ CREATE TABLE `players` (
 --
 
 INSERT INTO `players` (`id`, `name`, `score`, `difficulty`, `type`) VALUES
-(1, 'Joshua', 6000, 'Medium', 'History'),
-(2, 'Daniel', 7000, 'Hard', 'Math');
+(1, 'Joshua', 2000, 'Easy', 'History'),
+(2, 'Joshua', 2000, 'Easy', 'History'),
+(3, 'Ua', 0, 'Medium', 'History'),
+(4, 'Wayne', 1000, 'Easy', 'History'),
+(5, 'Resy', 4000, 'Easy', 'Math'),
+(6, 'Resy', 6000, 'Hard', 'Math'),
+(7, 'Resy', 9000, 'Hard', 'Geography'),
+(8, 'Fachri', 15000, 'Hard', 'Geography'),
+(9, 'Ana', 6000, 'Medium', 'History'),
+(10, 'Ana', 6000, 'Medium', 'History'),
+(11, 'Ana', 12000, 'Easy', 'History'),
+(12, 'Rey ', 3000, 'Easy', 'Geography');
 
 -- --------------------------------------------------------
 
@@ -136,7 +146,7 @@ ALTER TABLE `questions`
 -- AUTO_INCREMENT for table `players`
 --
 ALTER TABLE `players`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `questions`
